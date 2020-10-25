@@ -1,0 +1,353 @@
+package com.company;
+import java.util.Random;
+import java.util.Scanner;
+public class Main {
+
+    public static void main(String[] args) {
+	int [] cards = new int [52];
+	int counter = 1;
+	for( int i = 0; i< cards.length; i++){
+	      cards[i] = counter;
+	      counter++;
+        }
+	int card = 40;
+	System.out.println("Card Number: " + card);
+	System.out.println("Card Face: " + face(card));
+	System.out.println("Card Suit: " + suit(card));
+	System.out.println("Suit and Face: " +cardToString(card));
+	System.out.println("Original Deck: " +cardsToString(cards));
+	shuffle(cards);
+	System.out.println("Shuffled Deck: " + cardsToString(cards));
+	int[]newDeck = createShuffledDeck();
+	System.out.println("New Shuf Deck: " + cardsToString(newDeck));
+	task8();
+	//int [] hand ={1,10,11,13,12};//royal flush 1
+	//int [] hand ={1,2,3,5,4}; // straight flush 2
+	//int [] hand ={1,14,10,27,40}; //four of a kind 3
+	//int [] hand ={1,14,27,2,15}; // full house 4
+	//int [] hand = {1,2,7,4,5}; // flush 5
+	//int [] hand = {4,5,6,7,21};// straight 6
+	//int[] hand = {2,15,28,3,7}; // three of a kind 7
+	//int[] hand = {1,40,4,5,4}; // two pair 8
+	//int[] hand = {40,2,4,2,5}; // one pair 9
+	int[] hand = {7,3,21,24,52}; //high card 10
+	System.out.println(bestPokerHand(hand));
+	System.out.println(pokerHand(3));
+	System.out.println("Play:");
+	play();
+    }
+
+    public static int face(int card){
+    	int face = 0;
+    	if (card>13) { // checks if card needs to be mod divided
+			face = card % 13; //if so, divides it to get the remainder
+			if (face == 0) { // checks if the remainder is 0, so the card is a King,
+				face = 13;// reassigns value to 13 for K
+			}
+		}
+    	else
+    		face = card; //if the card number was less than 14, it returns as is
+	return face;
+    }
+
+    public static int suit (int card){
+	int suit = 4;// initialize variable
+	int divide = card/13; //return values can be 0,1,2,or 3
+	int mod = card % 13; //return values can be 0-12, 0 when the card is multiple of 13
+
+	if (( divide == 1 && mod==0)||(divide == 0))//checks for multiple of 13 or quotient is in the first set
+		return suit = 1;
+
+	if ( (divide == 2 && mod==0)|| ( divide == 1))//checks for multiple of 13 or quotient is in the second set
+		return suit = 2;
+
+	if ( (divide == 3 && mod==0) || ( divide == 2))//checks for multiple of 13 or quotient is in the third set
+		return suit = 3;
+
+	return suit; // is the quotient was 3, the card is in the fourth set, returns initial suit value
+	}
+
+	public static String cardToString(int card){
+    	int face = face(card);
+    	int suit = suit(card);
+    	String Face = "" + face;//assigns return value from face method to string variable
+    	String Suit = ""; //string variable for suits
+    	String rV = ""; // initializes return string
+    	if (face == 1) Face = "A";// only changes the value of face if necessary; face is 1 then it must be changed to A
+		if (face == 10) Face = "X";// only changes the value of face if necessary; face is 10 then it must be changed to X
+		if (face == 11) Face = "J";// only changes the value of face if necessary; face is 11 then it must be changed to J
+		if (face == 12) Face = "Q";// only changes the value of face if necessary; face is 12 then it must be changed to Q
+		if (face == 13) Face = "K";// only changes the value of face if necessary; face is 13 then it must be changed to K
+		if (suit == 1) 	Suit = "S";// checks the value of suit returned from previous method and changes value of Suit accordingly
+		if (suit == 2) 	Suit = "H";
+		if (suit == 3) 	Suit = "C";
+		if (suit == 4) 	Suit = "D";
+
+
+		rV = Suit + Face;// adds Suit and Face into one string to return
+		return rV;
+	}
+
+	public static String cardsToString(int[]cards){
+    	String rV = "["; //initialize return string
+    	int card = 0; // initialize card variable
+    	if (cards == null) { //checks for an empty deck
+			rV = "[]";
+			return rV; //returns blank if empty
+		}
+    	for(int j = 0; j < cards.length-1; j++) { // traverses through the deck, excluding last card
+			card = cards[j]; // one at a time, assigns the element in the array to variable card
+			rV = rV + cardToString(card) + ", ";// calls previous method to convert int card to String with face and suit
+		}// adds the card names and a comma into the return variable one at a time
+		card = cards[cards.length-1];// gets the value of the last card that was previously omitted
+    	String lastCard = cardToString(card);// converts int card to String name
+    	rV = rV + lastCard + "]";// adds last card into rV and closes the set
+    	return rV;
+	}
+
+	public static void shuffle(int[]deck){
+		Random rand = new Random(); // calls the random method
+		int counter = 0; // initializes counter that determines how many times to shuffle deck
+		while(counter < 30) { //deck will be shuffled twenty times
+			int n = rand.nextInt(51); // assigns int n to a random value between 0-51
+			int firstCard = deck[(n + 1)]; //assigns the number at the random index to firstCard
+
+			int j = rand.nextInt(51);// assigns int j to a random value between 0-51
+			int secondCard = deck[(j + 1)];//assigns the number at the random index to secondCard
+
+			int storage = 0;// initializes storage
+			storage = firstCard; //"puts" the value of firstCard into storage
+			firstCard = secondCard; //"puts" the value of secondCard into firstCard
+			secondCard = storage;//"puts" the value of storage (originally firstCard), into secondCard
+
+			deck[(n + 1)] = firstCard;// adds the new value card values into the deck at the same place it was taken from before
+			deck[(j + 1)] = secondCard;
+			counter ++;//increments counter by 1
+		}
+	}
+
+	public static int [] createShuffledDeck(){
+		int [] newDeck = new int [52]; //creates array of 52 elements
+		int counter = 1; //initializes counter, first card value
+		for( int i = 0; i< newDeck.length; i++){ // adds card values 1-52 in order into the array as elements
+			newDeck[i] = counter;
+			counter++;
+		}
+		shuffle(newDeck);// calls the shuffle method to shuffle the new deck
+		return newDeck; // returns the new, shuffled deck
+	}
+
+	public static int nextCard(int[]deck){
+	int i = 51;// initialize int i to last index of deck
+	int occupied = 0; // initialize counter
+	if (deck[0]==0) { //if the first card has already been removed, run this loop
+		while (deck[i] != 0 && i > 0) { //trverses the array backwards checking for when element equal 0
+			occupied++;// increments counter
+			i--;
+		}
+		if (occupied == 0){ // if none of the elements are non zero numbers, it will return 0
+			return 0;
+		}
+		else {
+			int nextCard = deck[52 - occupied]; // takes the card at the index of first element that equals zero from the back
+			deck[52 - occupied] = 0; // sets that index equal to zero
+			return nextCard; // returns the card number
+		}
+	}
+	else { //the first element is not zero
+		int nextCard = deck[0]; // takes the first card from the deck
+		deck[0] = 0;// replaces its value with zero
+		return nextCard;// returns the card number
+	}
+	}
+
+	public static void task8(){
+		int[]task8Deck = createShuffledDeck(); //creates a shuffled deck
+		System.out.println("Task  8  Deck: " + cardsToString(task8Deck)); //prints the deck
+		int cardCounter =0;
+		for(int i=0;i<5; i++){ //for loop to traverse the array until the 5th card
+			int card = task8Deck[i];
+			cardCounter ++;
+			System.out.println("Card " + cardCounter +" of 5: " +cardToString(card)); //prints each of the five cards on a separate line
+		}
+	}
+
+	public static int bestPokerHand(int[]hand){
+    int checkValue = 0; //initializes variable
+    int[] Faces = new int [5]; // creates array to store face values
+    int[] Suits = new int [5]; // creates array to store suit values
+
+    for(int i = 0; i <5; i++){ //traverses through the hand
+    	checkValue = hand[i]; // gets the card number from the hand
+    	Faces[i] = face(checkValue); //using the card number, adds the card's face value into the array
+		Suits[i] = suit(checkValue); //using the card number, adds the card's suit value into the array
+	}
+
+
+	int storage = 0;
+    for(int i =0; i < hand.length -1; i++) // uses swap method to arrange the hand in ascending card value order
+		for (int j = 0; j < hand.length - 1; j++) //organizes is it by suit as well in the final output
+			if (hand[j] > hand[j+1] ){
+				storage = hand[j];
+				hand[j] = hand[j+1];
+				hand[j+1] = storage;
+			}
+
+    for(int i =0; i < Faces.length -1; i++) // uses swap method to arrange the hand in ascending face value order
+    	for (int j = 0; j < Faces.length - 1; j++)
+    		if (Faces[j] > Faces[j+1] ){
+    			storage = Faces[j];
+				Faces[j] = Faces[j+1];
+				Faces[j+1] = storage;
+				}
+
+    int sameSuit = 0; //initialize variable to check if all of the cards have the same suit
+    for (int i= 0; i<5; i++) { // checks suit for any of the three Flushes
+		if (Suits[0] == Suits[i])//Only needs to compare it to one index because if even one does not match, it cannot be a flush
+			sameSuit++;
+	}
+    if (sameSuit == 5){ //if all the suits are the same, checks for what type of flush the hand is
+    	if ((Faces[4]==13 && Faces[1]==10 && Faces[0]==1)) // these value must be in the specified indexes for royal flush
+    		return 1; //Royal flush
+		else if ((Faces[4] - Faces[0])==4)// checks that they are consecutive, the difference of 5
+		    // a sequence's difference of first and last values will always be 4, only if all they are all the same suit
+			return 2; //Straight flush
+		else // for a Flush, there is no criteria on the face values
+			return 5; // Flush
+			}
+
+    if(Faces[0]==Faces[1] && Faces[1]==Faces[2] && Faces[2]==Faces[3]//checks if the first four or the last four cards in the hand are the same face value
+			||Faces[3]==Faces[4] && Faces[1]==Faces[2] && Faces[2]==Faces[3])//does not have to worry about card any of
+        // the middle cards being the odd one out because they are in ascending order
+    	return 3;// Four of a Kind
+
+	if((Faces[0]==Faces[1]&&Faces[1]==Faces[2]&&(Faces[3]==Faces[4])) // checks that first three cards are the same and last two are same face value
+		||(Faces[2]==Faces[3]&&Faces[3]==Faces[4]&&(Faces[0]==Faces[1])))// checks first two cards are the same and last three cards are the same face value
+			return 4; //Full House
+
+	if ((Faces[0] + 1) == Faces[1] && (Faces[1] + 1) == Faces[2] //checks that the face values are consecutive by adding one to the previous value
+            // and equating it to the current value
+			&& (Faces[2] + 1) == Faces[3] && (Faces[3] + 1) == Faces[4])
+			return 6;//Straight
+
+	if((Faces[0]==Faces[1]&&Faces[1]==Faces[2])||(Faces[1]==Faces[2]&&Faces[2]==Faces[3]) //checks if first three, middle three, or last three face values are the same
+		||(Faces[2]==Faces[3]&&Faces[3]==Faces[4])) //possibility of four of a kind would already be checked above
+			return 7; // Three of a Kind
+
+	if(Faces[0]==Faces[1]&&Faces[2]==Faces[3] || //checks that 1st two card values and next two are pairs, or the 2nd
+            // and 3rd and last two are pairs
+			Faces[1]==Faces[2]&&Faces[3]==Faces[4])
+		return 8;// Two Pair
+
+	if(Faces[0]==Faces[1]||Faces[1]==Faces[2] || //Checks if any two cards next to each other have equivalent face values
+			Faces[2]==Faces[3] || Faces[3]==Faces[4])
+			return 9;// One Pair
+
+	return 10;//High Card, any other outcome not tested above must be this
+	}
+
+	public static String pokerHand(int hand){
+		if (hand == 1) //First scenario matches, then returns the poker hand name
+			return "Royal Flush";
+		else if (hand== 2) //Second scenario matches, then returns the poker hand name
+			return "Straight Flush";
+		else if (hand== 3) //Third scenario matches, then returns the poker hand name
+			return "Four of a Kind";
+		else if (hand== 4) //Fourth scenario matches, then returns the poker hand name
+			return "Full House";
+		else if (hand== 5) //Fifth scenario matches, then returns the poker hand name
+			return "Flush";
+		else if (hand== 6) //Sixth scenario matches, then returns the poker hand name
+			return "Straight";
+		else if (hand== 7) //Seventh scenario matches, then returns the poker hand name
+			return "Three of a Kind";
+		if (hand== 8) //Eighth scenario matches, then returns the poker hand name
+			return "Two Pair";
+		if (hand== 9) //Ninth scenario matches, then returns the poker hand name
+			return "One Pair";
+		return "High Card"; // This is the last option so it will automatically be a high card.
+	}
+
+	public static void play(){
+    	int[] playingDeck = createShuffledDeck(); //Step 1, Creates a shuffled deck of 52 cards by calling previous method
+
+		int[] handA = new int[5]; //step 2, Creates a hand of cards for PLayer 1
+		int[] handB = new int[5]; //step 2  Creates a hand of cards for PLayer 2
+
+		int dealCard = nextCard(playingDeck); // initializes integer equivalent to the card number returned from the nextCard method
+
+		for(int i =0; i<5; i++) { //step 3, Traverses handA to add in card values
+			handA[i] = dealCard; //places the next card off the top of the deck into index i of Player 1's hand
+			dealCard = nextCard(playingDeck); // gets the next card
+			if (i!= 4) {//only four times because the PLayer 2 does not need to pick another card after their last draw
+				handB[i] = dealCard; // assigns the value of the nextCard to the index i of Player 2's hand
+				dealCard = nextCard(playingDeck);// gets the next card
+			}
+		}
+		handB[4] = dealCard; //step 3, adds in the last card value to PLayer 2's hand
+
+		System.out.println("Player 1's Turn: " + cardsToString(handA)); // Step 4, Calls previous method to return the card values as Cards in a hand
+
+		Scanner inputA = new Scanner(System.in); //initializes variable to store the user input
+		int userInputA = 5; // initializes a variable for a checking condition
+		int [] switchCardA = new int [5]; // creates an array that stores the user's input of which cards they want to replace
+		int i =0;
+		while(userInputA != 0) { //step 6 checks if the user typed in 0 to indicate they are done switching cards
+			System.out.println("Which card do you want to replace? " +
+					"Type the card number (1-5) and if you do not " +
+					"want to replace a card, type 0: ");
+			userInputA = inputA.nextInt(); // Step 5, assigns the variable storing user input to variable that is checking conditional in while loop
+			switchCardA[i] = userInputA;//step 7, All of user's input of which cards they want to replace are added into this array
+			i++;
+			}
+		for(int j = 0; j < 5; j++){  //step 7
+			if(switchCardA[j]!= 0) { //the array switchCardA may have elements equal to zero, depending how many cards the player switched
+				dealCard = nextCard(playingDeck); //gets the next card off the top of the deck
+				handA[switchCardA[j]-1]= dealCard; //assigns the new card to the location of the card the player wanted to switch
+			}
+		}
+		System.out.println("Player 1's new hand: " + cardsToString(handA));// step 8, Allows the player to see their new hand
+
+		System.out.println("");
+
+		System.out.println("Player 2's Turn: " + cardsToString(handB)); // Step 9, Calls previous method to return the card values as Cards in a hand
+
+		Scanner inputB = new Scanner(System.in); //initializes variable to store the user input
+		int userInputB = 5; // initializes a variable for a checking condition
+		int [] switchCardB = new int [5]; // creates an array that stores the user's input of which cards they want to replace
+		int k =0;
+		while(userInputB != 0) { //step 9 checks if the user typed in 0 to indicate they are done switching cards
+			System.out.println("Which card do you want to replace? " +
+					"Type the card number (1-5) and if you do not " +
+					"want to replace a card, type 0: ");
+			userInputB = inputB.nextInt(); // Step 9, assigns the variable storing user input to variable that is checking conditional in while loop
+			switchCardB[k] = userInputB;//step 9, All of user's input of which cards they want to replace are added into this array
+			k++;
+		}
+		for(int l = 0; l < 5; l++){  //step 9
+			if(switchCardB[l]!= 0) {//the array switchCardB may have elements equal to zero, depending how many cards the player switched
+				dealCard = nextCard(playingDeck); //gets the next card off the top of the deck
+				handB[switchCardB[l]-1]= dealCard; //assigns the new card to the location of the card the player wanted to switch
+			}
+		}
+		System.out.println("Player 2's new hand: " + cardsToString(handB)); //9, Allows the player to see their new hand
+
+		int pokerValueA = bestPokerHand(handA);//passes Player 1's hand to the bestPokerHand method to determine what type of hand(from 1-10) they have
+		int pokerValueB = bestPokerHand(handB);//same for Player 2, both return values are stored in their respecive int variables
+		System.out.println("");
+		if (pokerValueA < pokerValueB) // the lower return value means a higher poker hand so check for lower int
+			System.out.println("Player 1 wins with a " + pokerHand(pokerValueA)+ "!"); //print winner
+		else if(pokerValueB < pokerValueA) // the lower return value means a higher poker hand so check for lower int
+			System.out.println("Player 2 wins with a " + pokerHand(pokerValueB)+"!");//print winner
+		else { //if the players have the same return value; their cards can be compared to determine who has higher cards
+            if (((face(handA[4]) > face(handB[4])||(face(handA[4]) == 1&&(face(handB[4]) != 1)))&& (pokerValueA==2 || pokerValueA==6 ||pokerValueA==5 ||pokerValueA==1 ))) //player 1 has highest straight flush, flush,high card or straight
+                System.out.println("Player 1 wins with a " + pokerHand(pokerValueA)+ "!"); //since the hand values are in ascending order the last index will be greatest, so it compares them
+            else if ((face(handA[4]) < face(handB[4])||(face(handB[4]) == 1&&(face(handA[4]) != 1)))&& (pokerValueA==2 ||pokerValueA==6|| pokerValueA==5 || pokerValueA==1)) //player 2 has highest straight flush,flush, high card or straight
+                System.out.println("Player 2 wins with a " + pokerHand(pokerValueA)+ "!");//prints winner
+            else
+                System.out.println("Tie with a " + pokerHand(pokerValueA) + "!");// else there is a tie
+
+        }
+	}
+
+}
